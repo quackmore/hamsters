@@ -28,7 +28,7 @@
 #define USE_OPTIMIZE_PRINTF
 
 #ifndef SPI_FLASH_SIZE_MAP
-#define SPI_FLASH_SIZE_MAP 4
+#define SPI_FLASH_SIZE_MAP 6
 #endif
 
 #if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))

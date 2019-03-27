@@ -6,9 +6,13 @@
  * think this stuff is worth it, you can buy me a beer in return. Quackmore
  * ----------------------------------------------------------------------------
  */
-#ifndef __ESPBOT_TEST_HPP__
-#define __ESPBOT_TEST_HPP__
+#ifndef __RELAY_SEQUENCES_HPP__
+#define __RELAY_SEQUENCES_HPP__
 
-void run_test(int);
+void init_relay_seq_default(void);
+void init_relay_sequences(int idx, int sequence_idx);
+void exe_relay_sequences(int idx);
+void enable_relay_seq(int idx, int period);
+void disable_relay_seq(int idx);
 
 #endif

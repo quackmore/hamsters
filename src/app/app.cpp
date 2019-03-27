@@ -16,6 +16,7 @@ extern "C"
 }
 
 #include "app.hpp"
+#include "app_relay_sequences.hpp"
 #include "espbot_global.hpp"
 #include "library_dht.hpp"
 #include "library_max6675.hpp"
@@ -30,25 +31,18 @@ extern "C"
 #define APP_RELEASE "Unavailable"
 #endif
 
-char *app_name = "App Example";
+char *app_name = "HAMSTERS";
 char *app_release = APP_RELEASE;
-
-Dht *dht22;
-Max6675 *max6675;
 
 void ICACHE_FLASH_ATTR app_init_before_wifi(void)
 {
     init_dio_task();
-    // dht22 = new Dht(ESPBOT_D2, DHT22, 2000, 3000, 60000, 10);
-    // max6675 = new Max6675(ESPBOT_D5, ESPBOT_D6, ESPBOT_D7, 1000, 30000, 10);
-    // following is for no polling
-    dht22 = new Dht(ESPBOT_D2, DHT22, 2000, 3000, 0, 10);
-    max6675 = new Max6675(ESPBOT_D5, ESPBOT_D6, ESPBOT_D7, 1000, 0, 10);
+    init_relay_seq_default();
 }
 
 void ICACHE_FLASH_ATTR app_init_after_wifi(void)
 {
-    esp_mDns.start("this_is_the_app_name");
+    esp_mDns.start(espbot.get_name());
 }
 
 void ICACHE_FLASH_ATTR app_deinit_on_wifi_disconnect()
