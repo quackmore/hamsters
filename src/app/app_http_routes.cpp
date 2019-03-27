@@ -106,7 +106,7 @@ bool ICACHE_FLASH_ATTR app_http_routes(struct espconn *ptr_espconn, Html_parsed_
         if (msg.ref)
         {
             os_sprintf(msg.ref, "{\"sequence_number\": %d}", sequence_number);
-            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_TEXT, msg.ref, true);
+            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_JSON, msg.ref, true);
             exe_relay_sequences(sequence_number);
         }
         else
@@ -151,7 +151,7 @@ bool ICACHE_FLASH_ATTR app_http_routes(struct espconn *ptr_espconn, Html_parsed_
         if (msg.ref)
         {
             os_sprintf(msg.ref, "{\"sequence_number\": %d}", sequence_number);
-            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_TEXT, msg.ref, true);
+            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_JSON, msg.ref, true);
             init_relay_sequences(sequence_number, sequence_number);
         }
         else
@@ -252,7 +252,7 @@ bool ICACHE_FLASH_ATTR app_http_routes(struct espconn *ptr_espconn, Html_parsed_
                        sequence_idx,
                        (sequence_enabled) ? "true" : "false",
                        sequence_period);
-            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_TEXT, msg.ref, true);
+            response(ptr_espconn, HTTP_OK, HTTP_CONTENT_JSON, msg.ref, true);
             if (sequence_enabled)
                 enable_relay_seq(sequence_idx, sequence_period);
             else
