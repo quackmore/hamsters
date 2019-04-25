@@ -31,8 +31,9 @@ extern "C"
 #define APP_RELEASE "Unavailable"
 #endif
 
-char *app_name = "HAMSTERS";
 char *app_release = APP_RELEASE;
+
+char *app_name = "HAMSTERS";
 
 void ICACHE_FLASH_ATTR app_init_before_wifi(void)
 {

@@ -173,3 +173,100 @@ void ICACHE_FLASH_ATTR disable_relay_seq(int idx)
     relay_seq_enabled[idx] = false;
     os_timer_disarm(&relay_seq_timer[idx]);
 }
+
+static void ICACHE_FLASH_ATTR relay_seq_timer_func(void *param)
+{
+    struct do_seq *ptr = (struct do_seq *)param;
+    exe_do_seq_ms(ptr);
+}
+
+ICACHE_FLASH_ATTR relay_seq::relay_seq(int id, int pin, int pulse_count, int32 pulse_high_length, int32 pulse_low_length, int32 period)
+{
+    m_id = id;
+    m_pin = pin;
+    m_pulse_count = pulse_count;
+    m_pulse_high_length = pulse_high_length;
+    m_pulse_low_length = pulse_low_length;
+    m_period = period;
+    m_enabled = false;
+
+    PIN_FUNC_SELECT(gpio_MUX(m_pin), gpio_FUNC(m_pin));
+    GPIO_OUTPUT_SET(gpio_NUM(m_pin), ESPBOT_HIGH);
+    m_seq = new_do_seq(gpio_NUM(m_pin), m_pulse_count);
+    if (m_seq)
+    {
+        set_do_seq_cb(m_seq, relay_sequence_completed, (void *)m_id, task);
+        out_seq_clear(m_seq);
+        int ii;
+        int level = ESPBOT_LOW;
+        for (ii = 0; ii < m_pulse_count; ii++)
+        {
+            if (level == ESPBOT_LOW)
+            {
+                out_seq_add(m_seq, level, m_pulse_low_length);
+                level = ESPBOT_HIGH;
+            }
+            else
+            {
+                out_seq_add(m_seq, level, m_pulse_high_length);
+                level = ESPBOT_LOW;
+            }
+        }
+    }
+}
+
+ICACHE_FLASH_ATTR relay_seq::~relay_seq()
+{
+    free_do_seq(m_seq);
+}
+
+int ICACHE_FLASH_ATTR relay_seq::get_id(void)
+{
+    return m_id;
+}
+
+int ICACHE_FLASH_ATTR relay_seq::get_pin(void)
+{
+    return m_pin;
+}
+
+int ICACHE_FLASH_ATTR relay_seq::get_pulse_count(void)
+{
+    return m_pulse_count;
+}
+
+int32 ICACHE_FLASH_ATTR relay_seq::get_pulse_high_length(void)
+{
+    return m_pulse_high_length;
+}
+
+int32 ICACHE_FLASH_ATTR relay_seq::get_pulse_low_length(void)
+{
+    return m_pulse_low_length;
+}
+
+int32 ICACHE_FLASH_ATTR relay_seq::get_period(void)
+{
+    return m_period;
+}
+
+void ICACHE_FLASH_ATTR relay_seq::enable(void)
+{
+    if (m_seq)
+    {
+        esplog.trace("enabling relay sequence [%d]\n", m_id);
+        m_enabled = true;
+        os_timer_setfn(&m_period_timer, (os_timer_func_t *)relay_seq_timer_func, (void *)m_seq);
+        os_timer_arm(&m_period_timer, m_period, 1);
+    }
+}
+
+void ICACHE_FLASH_ATTR relay_seq::disable(void)
+{
+    os_timer_disarm(&m_period_timer);
+}
+
+void ICACHE_FLASH_ATTR relay_seq::exe(void)
+{
+    exe_do_seq_ms(m_seq);
+}
