@@ -42,7 +42,7 @@ bool ICACHE_FLASH_ATTR app_http_routes(struct espconn *ptr_espconn, Html_parsed_
                       10 +
                       os_strlen(system_get_sdk_version()) +
                       10;
-        Heap_chunk msg(155 + str_len);
+        Heap_chunk msg(155 + str_len, dont_free);
         if (msg.ref)
         {
             os_sprintf(msg.ref, "{\"app_name\":\"%s\","
