@@ -5,7 +5,6 @@ env.sh
 version.txt
 lib/libapp.a
 lib/libuser.a
-lib/liblibrary.a
 !.vscode
 .vscode/*
 !.vscode/tasks.json
