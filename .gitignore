@@ -1,4 +1,3 @@
-.vscode
 env.sh
 *.bin
 *.dump
@@ -7,7 +6,6 @@ version.txt
 lib/libapp.a
 lib/libuser.a
 lib/liblibrary.a
-espUpgradeBin
-espflash1
-espflash2
-espflashInit
+!.vscode
+.vscode/*
+!.vscode/tasks.json
