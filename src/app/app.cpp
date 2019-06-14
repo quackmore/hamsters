@@ -16,6 +16,8 @@ extern "C"
 }
 
 #include "app.hpp"
+#include "app_wheel.hpp"
+#include "app_doorbell.hpp"
 #include "app_relay_sequences.hpp"
 #include "espbot_global.hpp"
 #include "espbot_gpio.hpp"
@@ -36,47 +38,12 @@ char *app_release = APP_RELEASE;
 
 char *app_name = "HAMSTERS";
 
-os_timer_t hamster_timer;
-os_timer_t hamster_relay;
-int hamster_count;
-#define HAMSTER_TIMER 600000
-#define HAMSTER_RELAY 150000
-#define HAMSTER_COUNT_MAX (5 * 3) // 5 volte all'ora per 3 ore
-
-void ICACHE_FLASH_ATTR app_stop_hamsters(void)
-{
-    esp_gpio.set(ESPBOT_D4, ESPBOT_HIGH);
-}
-
-void ICACHE_FLASH_ATTR app_start_hamsters(void)
-{
-    hamster_count++;
-    if (hamster_count > HAMSTER_COUNT_MAX)
-        return;
-    esp_gpio.set(ESPBOT_D4, ESPBOT_LOW);
-    os_timer_arm(&hamster_relay, HAMSTER_RELAY, 0);
-    os_timer_arm(&hamster_timer, HAMSTER_TIMER, 0);
-}
-
-void ICACHE_FLASH_ATTR app_init_hamsters(void)
-{
-    esp_gpio.config(ESPBOT_D4, ESPBOT_GPIO_OUTPUT);
-    esp_gpio.set(ESPBOT_D4, ESPBOT_HIGH);
-    hamster_count = 0;
-    os_timer_disarm(&hamster_timer);
-    os_timer_disarm(&hamster_relay);
-
-    os_timer_setfn(&hamster_timer, (os_timer_func_t *)app_start_hamsters, (void *)NULL);
-    os_timer_setfn(&hamster_relay, (os_timer_func_t *)app_stop_hamsters, (void *)NULL);
-
-    os_timer_arm(&hamster_timer, HAMSTER_TIMER, 0);
-}
-
 void ICACHE_FLASH_ATTR app_init_before_wifi(void)
 {
     init_dio_task();
     init_relay_seq_default();
-    app_init_hamsters();
+    app_init_wheel();
+    app_init_doorbell();
 }
 
 void ICACHE_FLASH_ATTR app_init_after_wifi(void)
