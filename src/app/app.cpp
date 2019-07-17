@@ -38,7 +38,7 @@ char *app_release = APP_RELEASE;
 
 char *app_name = "HAMSTERS";
 
-void ICACHE_FLASH_ATTR app_init_before_wifi(void)
+void app_init_before_wifi(void)
 {
     init_dio_task();
     init_relay_seq_default();
@@ -46,12 +46,12 @@ void ICACHE_FLASH_ATTR app_init_before_wifi(void)
     app_init_doorbell();
 }
 
-void ICACHE_FLASH_ATTR app_init_after_wifi(void)
+void app_init_after_wifi(void)
 {
     esp_mDns.start(espbot.get_name());
 }
 
-void ICACHE_FLASH_ATTR app_deinit_on_wifi_disconnect()
+void app_deinit_on_wifi_disconnect()
 {
     esp_mDns.stop();
 }

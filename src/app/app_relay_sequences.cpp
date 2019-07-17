@@ -92,13 +92,13 @@ static int32 relay_seq_period[RELAY_SEQUENCES_COUNT];
 static os_timer_t relay_seq_timer[RELAY_SEQUENCES_COUNT];
 static struct do_seq *relay_seq[RELAY_SEQUENCES_COUNT];
 
-static void ICACHE_FLASH_ATTR relay_sequence_timer_func(void *param)
+static void relay_sequence_timer_func(void *param)
 {
     int idx = (int)param;
     exe_do_seq_ms(relay_seq[idx]);
 }
 
-void ICACHE_FLASH_ATTR init_relay_seq_default(void)
+void init_relay_seq_default(void)
 {
     int ii;
     for (ii = 0; ii < RELAY_SEQUENCES_COUNT; ii++)
@@ -111,13 +111,13 @@ void ICACHE_FLASH_ATTR init_relay_seq_default(void)
     }
 }
 
-static void ICACHE_FLASH_ATTR relay_sequence_completed(void *param)
+static void relay_sequence_completed(void *param)
 {
     int idx = (int)param;
     esplog.trace("relay sequence [%d] completed\n", idx);
 }
 
-void ICACHE_FLASH_ATTR init_relay_sequences(int idx, int pulse_idx)
+void init_relay_sequences(int idx, int pulse_idx)
 {
     PIN_FUNC_SELECT(gpio_MUX(relay_do[idx]), gpio_FUNC(relay_do[idx]));
     GPIO_OUTPUT_SET(gpio_NUM(relay_do[idx]), ESPBOT_HIGH);
@@ -153,12 +153,12 @@ void ICACHE_FLASH_ATTR init_relay_sequences(int idx, int pulse_idx)
     // }
 }
 
-void ICACHE_FLASH_ATTR exe_relay_sequences(int idx)
+void exe_relay_sequences(int idx)
 {
     exe_do_seq_ms(relay_seq[idx]);
 }
 
-void ICACHE_FLASH_ATTR enable_relay_seq(int idx, int period)
+void enable_relay_seq(int idx, int period)
 {
     esplog.trace("enabling relay sequence [%d] period: %d\n", idx, period);
     relay_seq_enabled[idx] = true;
@@ -167,20 +167,20 @@ void ICACHE_FLASH_ATTR enable_relay_seq(int idx, int period)
     // exe_relay_sequences(idx);
 }
 
-void ICACHE_FLASH_ATTR disable_relay_seq(int idx)
+void disable_relay_seq(int idx)
 {
     esplog.trace("disabling relay sequence [%d]\n", idx);
     relay_seq_enabled[idx] = false;
     os_timer_disarm(&relay_seq_timer[idx]);
 }
 
-static void ICACHE_FLASH_ATTR relay_seq_timer_func(void *param)
+static void relay_seq_timer_func(void *param)
 {
     struct do_seq *ptr = (struct do_seq *)param;
     exe_do_seq_ms(ptr);
 }
 
-ICACHE_FLASH_ATTR relay_seq::relay_seq(int id, int pin, int pulse_count, int32 pulse_high_length, int32 pulse_low_length, int32 period)
+relay_seq::relay_seq(int id, int pin, int pulse_count, int32 pulse_high_length, int32 pulse_low_length, int32 period)
 {
     m_id = id;
     m_pin = pin;
@@ -215,42 +215,42 @@ ICACHE_FLASH_ATTR relay_seq::relay_seq(int id, int pin, int pulse_count, int32 p
     }
 }
 
-ICACHE_FLASH_ATTR relay_seq::~relay_seq()
+relay_seq::~relay_seq()
 {
     free_do_seq(m_seq);
 }
 
-int ICACHE_FLASH_ATTR relay_seq::get_id(void)
+int relay_seq::get_id(void)
 {
     return m_id;
 }
 
-int ICACHE_FLASH_ATTR relay_seq::get_pin(void)
+int relay_seq::get_pin(void)
 {
     return m_pin;
 }
 
-int ICACHE_FLASH_ATTR relay_seq::get_pulse_count(void)
+int relay_seq::get_pulse_count(void)
 {
     return m_pulse_count;
 }
 
-int32 ICACHE_FLASH_ATTR relay_seq::get_pulse_high_length(void)
+int32 relay_seq::get_pulse_high_length(void)
 {
     return m_pulse_high_length;
 }
 
-int32 ICACHE_FLASH_ATTR relay_seq::get_pulse_low_length(void)
+int32 relay_seq::get_pulse_low_length(void)
 {
     return m_pulse_low_length;
 }
 
-int32 ICACHE_FLASH_ATTR relay_seq::get_period(void)
+int32 relay_seq::get_period(void)
 {
     return m_period;
 }
 
-void ICACHE_FLASH_ATTR relay_seq::enable(void)
+void relay_seq::enable(void)
 {
     if (m_seq)
     {
@@ -261,12 +261,12 @@ void ICACHE_FLASH_ATTR relay_seq::enable(void)
     }
 }
 
-void ICACHE_FLASH_ATTR relay_seq::disable(void)
+void relay_seq::disable(void)
 {
     os_timer_disarm(&m_period_timer);
 }
 
-void ICACHE_FLASH_ATTR relay_seq::exe(void)
+void relay_seq::exe(void)
 {
     exe_do_seq_ms(m_seq);
 }

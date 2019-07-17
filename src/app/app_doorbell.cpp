@@ -30,12 +30,12 @@ bool doorbell_prev_timer_short;
 #define DOORBELL_COUNT_MAX (6 * 3)   // 6 volte all'ora per 3 ore
 #define DOORBELL_COUNT_RESET (6 * 6) // 6 volte all'ora per 6 ore
 
-void ICACHE_FLASH_ATTR app_stop_doorbell(void)
+void app_stop_doorbell(void)
 {
     esp_gpio.set(ESPBOT_D3, ESPBOT_HIGH);
 }
 
-void ICACHE_FLASH_ATTR app_start_doorbell(void)
+void app_start_doorbell(void)
 {
     doorbell_count++;
     if (doorbell_prev_timer_short)
@@ -62,7 +62,7 @@ void ICACHE_FLASH_ATTR app_start_doorbell(void)
     os_timer_arm(&doorbell_relay, DOORBELL_RELAY, 0);
 }
 
-void ICACHE_FLASH_ATTR app_init_doorbell(void)
+void app_init_doorbell(void)
 {
     esp_gpio.config(ESPBOT_D3, ESPBOT_GPIO_OUTPUT);
     esp_gpio.set(ESPBOT_D3, ESPBOT_HIGH);
