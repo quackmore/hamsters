@@ -18,54 +18,63 @@ extern "C"
 #include "app_doorbell.hpp"
 #include "espbot_global.hpp"
 #include "espbot_gpio.hpp"
+#include "app_relay_sequences.hpp"
 
 os_timer_t doorbell_timer;
 os_timer_t doorbell_relay;
 int doorbell_count;
 bool doorbell_prev_timer_short;
 
-#define DOORBELL_TIMER_LONG 1020000
+//#define DOORBELL_TIMER_LONG 1020000
+#define DOORBELL_TIMER_LONG 600000
 #define DOORBELL_TIMER_SHORT 300
 #define DOORBELL_RELAY 150
 #define DOORBELL_COUNT_MAX (6 * 3)   // 6 volte all'ora per 3 ore
 #define DOORBELL_COUNT_RESET (6 * 6) // 6 volte all'ora per 6 ore
+#define DOORELL_DO ESPBOT_D3
 
 void app_stop_doorbell(void)
 {
-    esp_gpio.set(ESPBOT_D3, ESPBOT_HIGH);
+    esp_gpio.set(DOORELL_DO, ESPBOT_HIGH);
 }
-
+ 
 void app_start_doorbell(void)
 {
-    doorbell_count++;
-    if (doorbell_prev_timer_short)
-    {
-        os_timer_arm(&doorbell_timer, DOORBELL_TIMER_LONG, 0);
-        doorbell_prev_timer_short = false;
-    }
-    else
-    {
-        unsigned long value = os_random();
-        if (value > (__LONG_MAX__ / 2))
-        {
-            os_timer_arm(&doorbell_timer, DOORBELL_TIMER_SHORT, 0);
-            doorbell_prev_timer_short = true;
-        }
-        else
-            os_timer_arm(&doorbell_timer, DOORBELL_TIMER_LONG, 0);
-    }
-    // if(doorbell_count > DOORBELL_COUNT_RESET)
-    //     doorbell_count = 0;
-    // if (doorbell_count > DOORBELL_COUNT_MAX)
-    //     return;
-    esp_gpio.set(ESPBOT_D3, ESPBOT_LOW);
-    os_timer_arm(&doorbell_relay, DOORBELL_RELAY, 0);
+    // doorbell_count++;
+    // if (doorbell_prev_timer_short)
+    // {
+    //     os_timer_arm(&doorbell_timer, DOORBELL_TIMER_LONG, 0);
+    //     doorbell_prev_timer_short = false;
+    // }
+    // else
+    // {
+    //     unsigned long value = os_random();
+    //     if (value > (__LONG_MAX__ / 2))
+    //     {
+    //         os_timer_arm(&doorbell_timer, DOORBELL_TIMER_SHORT, 0);
+    //         doorbell_prev_timer_short = true;
+    //     }
+    //     else
+    //         os_timer_arm(&doorbell_timer, DOORBELL_TIMER_LONG, 0);
+    // }
+    // // if(doorbell_count > DOORBELL_COUNT_RESET)
+    // //     doorbell_count = 0;
+    // // if (doorbell_count > DOORBELL_COUNT_MAX)
+    // //     return;
+    // esp_gpio.set(DOORELL_DO, ESPBOT_LOW);
+    // os_timer_arm(&doorbell_relay, DOORBELL_RELAY, 0);
+    static int sequence_idx = 0;
+    exe_relay_sequences(sequence_idx);
+    sequence_idx++;
+    if (sequence_idx > 3)
+        sequence_idx = 0;
+    os_timer_arm(&doorbell_timer, DOORBELL_TIMER_LONG, 0);
 }
 
 void app_init_doorbell(void)
 {
-    esp_gpio.config(ESPBOT_D3, ESPBOT_GPIO_OUTPUT);
-    esp_gpio.set(ESPBOT_D3, ESPBOT_HIGH);
+    esp_gpio.config(DOORELL_DO, ESPBOT_GPIO_OUTPUT);
+    esp_gpio.set(DOORELL_DO, ESPBOT_HIGH);
     doorbell_count = 0;
     doorbell_prev_timer_short = false;
     os_timer_disarm(&doorbell_timer);

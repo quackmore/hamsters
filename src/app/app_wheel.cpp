@@ -27,10 +27,11 @@ int wheel_count;
 #define WHEEL_RELAY 150000
 #define WHEEL_COUNT_MAX (6 * 3) // 6 volte all'ora per 3 ore
 #define WHEEL_COUNT_RESET (6 * 6) // 6 volte all'ora per 6 ore
+#define WHEEL_DO ESPBOT_D4
 
 void app_stop_wheel(void)
 {
-    esp_gpio.set(ESPBOT_D4, ESPBOT_HIGH);
+    esp_gpio.set(WHEEL_DO, ESPBOT_HIGH);
 }
 
 void app_start_wheel(void)
@@ -41,14 +42,14 @@ void app_start_wheel(void)
         wheel_count = 0;
     if (wheel_count > WHEEL_COUNT_MAX)
         return;
-    esp_gpio.set(ESPBOT_D4, ESPBOT_LOW);
+    esp_gpio.set(WHEEL_DO, ESPBOT_LOW);
     os_timer_arm(&wheel_relay, WHEEL_RELAY, 0);
 }
 
 void app_init_wheel(void)
 {
-    esp_gpio.config(ESPBOT_D4, ESPBOT_GPIO_OUTPUT);
-    esp_gpio.set(ESPBOT_D4, ESPBOT_HIGH);
+    esp_gpio.config(WHEEL_DO, ESPBOT_GPIO_OUTPUT);
+    esp_gpio.set(WHEEL_DO, ESPBOT_HIGH);
     wheel_count = 0;
     os_timer_disarm(&wheel_timer);
     os_timer_disarm(&wheel_relay);
